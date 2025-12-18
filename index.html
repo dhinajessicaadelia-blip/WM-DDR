@@ -2,273 +2,153 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Warung Makan Didira</title>
-
+<title>Kasir Pink Store</title>
 <style>
-body{
-    font-family: Arial;
-    background:#ffe6f0;
+body {
+  font-family: Arial, sans-serif;
+  background: #ffe6f0;
+  padding: 20px;
 }
-h2{
-    text-align:center;
-    color:#d63384;
+h1 {
+  text-align: center;
+  color: #d63384;
 }
-.container{
-    display:flex;
-    gap:20px;
-    max-width:1100px;
-    margin:20px auto;
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
 }
-.box{
-    background:white;
-    padding:15px;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
-    flex:1;
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
-.menu{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
+th, td {
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
 }
-.menu button{
-    background:#ffb6d5;
-    border:none;
-    border-radius:10px;
-    padding:10px;
-    cursor:pointer;
-    font-weight:bold;
+th {
+  background: #f8b4d9;
 }
-.menu button:hover{
-    background:#ff69b4;
-    color:white;
+button {
+  background: #d63384;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
 }
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
-    font-size:13px;
+input {
+  padding: 5px;
+  width: 100%;
 }
-th,td{
-    border:1px solid #f3b6cf;
-    padding:6px;
-    text-align:center;
-}
-th{
-    background:#ffd1e8;
-}
-.qty-btn{
-    padding:2px 6px;
-    margin:0 3px;
-    border:none;
-    border-radius:5px;
-    background:#ff69b4;
-    color:white;
-    cursor:pointer;
-}
-input,button{
-    width:100%;
-    padding:8px;
-    margin-top:5px;
-    border-radius:8px;
-    border:1px solid #f3b6cf;
-}
-.total{
-    background:#fff0f7;
-    padding:10px;
-    border-radius:10px;
-    margin-top:10px;
-}
-
-/* STRUK */
-#struk{
-    display:none;
-    width:220px;
-    background:white;
-    padding:10px;
-    font-family:monospace;
-    font-size:11px;
-}
-.center{text-align:center;}
-hr{
-    border:none;
-    border-top:1px dashed black;
-}
-@media print{
-    body *{visibility:hidden;}
-    #struk,#struk *{visibility:visible;}
-    #struk{position:absolute;left:0;top:0;}
+.total {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: right;
 }
 </style>
 </head>
 
 <body>
-
-<h2>🍽️ Kasir Menu Makanan & Minuman</h2>
+<h1>🩷 Kasir Pink Store</h1>
 
 <div class="container">
+  <h3>Menu</h3>
+  <table>
+    <tr>
+      <th>Nama</th>
+      <th>Harga</th>
+      <th>Qty</th>
+      <th>Aksi</th>
+    </tr>
+    <tr>
+      <td>Es Teh</td>
+      <td>5000</td>
+      <td><input type="number" id="q1" value="1"></td>
+      <td><button onclick="tambah('Es Teh',5000,q1.value)">Tambah</button></td>
+    </tr>
+    <tr>
+      <td>Mie Goreng</td>
+      <td>12000</td>
+      <td><input type="number" id="q2" value="1"></td>
+      <td><button onclick="tambah('Mie Goreng',12000,q2.value)">Tambah</button></td>
+    </tr>
+    <tr>
+      <td>Nasi Goreng</td>
+      <td>15000</td>
+      <td><input type="number" id="q3" value="1"></td>
+      <td><button onclick="tambah('Nasi Goreng',15000,q3.value)">Tambah</button></td>
+    </tr>
+  </table>
 
-<!-- MENU -->
-<div class="box">
-<h3>Menu</h3>
-<button onclick="toggleMenu()" id="btnMenu">🍽️ Tampilkan Menu</button>
-<div class="menu" id="menu" style="display:none;"></div>
+  <h3>Keranjang</h3>
+  <div id="keranjang"></div>
+
+  <p class="total">Total: Rp <span id="total">0</span></p>
+
+  <label>Uang Dibayar</label>
+  <input type="number" id="bayar" oninput="hitungKembali()">
+
+  <p class="total">Kembalian: Rp <span id="kembali">0</span></p>
+
+  <button onclick="printStruk()">🖨️ Print Struk</button>
 </div>
 
-<!-- KERANJANG -->
-<div class="box">
-<h3>Keranjang</h3>
-<table>
-<tr>
-<th>Item</th>
-<th>Qty</th>
-<th>Subtotal</th>
-</tr>
-<tbody id="list"></tbody>
-</table>
-
-<div class="total">
-<p>Total: <b>Rp <span id="total">0</span></b></p>
-<input type="number" id="bayar" placeholder="Uang Bayar">
-<button onclick="hitungBayar()">Bayar</button>
-<p>Kembalian: <b>Rp <span id="kembalian">0</span></b></p>
-<button onclick="printStruk()">Print Struk</button>
-</div>
-</div>
-
-</div>
-
-<!-- STRUK -->
-<div id="struk">
-<div class="center">
-<b>KASIR PINK</b><br>
--------------------
-</div>
-<div id="tanggal"></div>
-<hr>
-<div id="strukItem"></div>
-<hr>
-<div>Total: <span id="sTotal"></span></div>
-<div>Bayar: <span id="sBayar"></span></div>
-<div>Kembali: <span id="sKembali"></span></div>
-<hr>
-<div class="center">TERIMA KASIH 💖</div>
-</div>
+<div id="struk" style="display:none"></div>
 
 <script>
-let items=[];
-let total=0;
+let total = 0;
+let strukText = "";
 
-// DATA MENU
-const menuData=[
- {nama:"Mie Goreng",harga:12000},
- {nama:"Mie Kuah",harga:12000},
- {nama:"Nasi Goreng",harga:15000},
- {nama:"Ayam Geprek",harga:18000},
- {nama:"Bakso",harga:13000},
- {nama:"Es Teh",harga:5000},
- {nama:"Es Jeruk",harga:7000},
- {nama:"Kopi Hitam",harga:6000},
- {nama:"Cappuccino",harga:12000},
- {nama:"Milkshake",harga:14000}
-];
+function tambah(nama, harga, qty) {
+  let sub = harga * qty;
+  total += sub;
 
-// TAMPIL MENU
-const menuDiv=document.getElementById("menu");
-menuData.forEach(m=>{
-menuDiv.innerHTML+=`
-<button onclick="tambahItem('${m.nama}',${m.harga})">
-${m.nama}<br>Rp ${m.harga}
-</button>`;
-});
+  document.getElementById("keranjang").innerHTML +=
+    `<p>${nama} ${qty} x ${harga} = Rp ${sub}</p>`;
 
-// TOGGLE MENU
-function toggleMenu(){
- let menu=document.getElementById("menu");
- let btn=document.getElementById("btnMenu");
- if(menu.style.display==="none"){
-   menu.style.display="grid";
-   btn.innerText="❌ Tutup Menu";
- }else{
-   menu.style.display="none";
-   btn.innerText="🍽️ Tampilkan Menu";
- }
+  strukText += `${nama} ${qty} x ${harga} = ${sub}<br>`;
+  document.getElementById("total").innerText = total;
 }
 
-// TAMBAH ITEM
-function tambahItem(nama,harga){
- let item=items.find(i=>i.nama===nama);
- if(item){
-   item.qty++;
- }else{
-   items.push({nama,harga,qty:1});
- }
- render();
+function hitungKembali() {
+  let bayar = document.getElementById("bayar").value;
+  document.getElementById("kembali").innerText = bayar - total;
 }
 
-// TAMBAH & KURANG QTY
-function plus(i){
- items[i].qty++;
- render();
-}
-function minus(i){
- items[i].qty--;
- if(items[i].qty<=0) items.splice(i,1);
- render();
-}
+function printStruk() {
+  let bayar = document.getElementById("bayar").value;
+  let kembali = bayar - total;
 
-// RENDER KERANJANG
-function render(){
- total=0;
- let html="";
- items.forEach((i,index)=>{
-   let sub=i.qty*i.harga;
-   total+=sub;
-   html+=`
-   <tr>
-    <td>${i.nama}</td>
-    <td>
-     <button class="qty-btn" onclick="minus(${index})">-</button>
-     ${i.qty}
-     <button class="qty-btn" onclick="plus(${index})">+</button>
-    </td>
-    <td>Rp ${sub}</td>
-   </tr>`;
- });
- document.getElementById("list").innerHTML=html;
- document.getElementById("total").innerText=total;
-}
-
-// BAYAR
-function hitungBayar(){
- let bayar=document.getElementById("bayar").value;
- if(bayar<total){alert("Uang kurang");return;}
- document.getElementById("kembalian").innerText=bayar-total;
-}
-
-// PRINT STRUK
-function printStruk(){
- let bayar=document.getElementById("bayar").value;
- if(bayar===""){alert("Masukkan uang bayar");return;}
-
- let html="";
- items.forEach(i=>{
-   html+=`${i.nama}<br>${i.qty} x ${i.harga} = ${i.qty*i.harga}<br>`;
- });
-
- let now=new Date();
- document.getElementById("tanggal").innerText=
- now.toLocaleDateString()+" "+now.toLocaleTimeString();
-
- document.getElementById("strukItem").innerHTML=html;
- document.getElementById("sTotal").innerText=total;
- document.getElementById("sBayar").innerText=bayar;
- document.getElementById("sKembali").innerText=bayar-total;
-
- document.getElementById("struk").style.display="block";
- window.print();
+  let win = window.open("", "", "width=300,height=600");
+  win.document.write(`
+    <html>
+    <head>
+      <title>Struk</title>
+      <style>
+        body { font-family: monospace; font-size: 12px; }
+        h2 { text-align: center; }
+      </style>
+    </head>
+    <body>
+      <h2>Pink Store</h2>
+      ${strukText}
+      <hr>
+      Total : ${total}<br>
+      Bayar : ${bayar}<br>
+      Kembali : ${kembali}<br>
+      <p>Terima Kasih</p>
+      <script>
+        window.print();
+        window.onafterprint = window.close;
+      <\/script>
+    </body>
+    </html>
+  `);
+  win.document.close();
 }
 </script>
-
 </body>
 </html>
